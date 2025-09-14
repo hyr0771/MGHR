@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.launch --nproc_per_node=1 --master_port=29504 --nnodes=1 --use_env evaluate.py --model CFRF_Model --batch_size 42 --activation swish --dropout 0.45 --input saved_models/VQAv2 --epoch _best --topk 6 --gpu 1  --split test2015 --checkpoint 4m_base_finetune/vqa/model_state_epoch_9.th --dataset VQA --config ./xvlm/configs/VQA_480.yaml
