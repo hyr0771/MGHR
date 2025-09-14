@@ -1,0 +1,49 @@
+# 性能优化配置文件 - 针对24GB GPU优化
+# 内存优化参数
+memory_optimization:
+  dynamic_batch_size: true   # 24GB显存需要动态调整
+  max_memory_usage: 0.95    # 降低到85%，为系统留出余量
+  gradient_accumulation_steps: 4  # 增加梯度累积，减少显存压力
+  mixed_precision: true     # 保持混合精度以节省内存
+  memory_efficient_attention: true  # 启用内存高效注意力
+  gradient_checkpointing: true  # 启用梯度检查点节省显存
+  pin_memory: true
+  num_workers: 8           # 减少worker数量，避免内存竞争
+  prefetch_factor: 2       # 减少预取因子
+  persistent_workers: true
+
+# 训练优化参数 - 针对24GB GPU
+training_optimization:
+  batch_size: 12            # 减少批处理大小
+  update_freq: 4           # 增加更新频率，通过梯度累积达到有效批大小
+  clip_norm: 0.25
+  lr: 2.5e-4              # 稍微降低学习率
+  xvlm_lr: 5e-5           # 降低XVLM学习率
+
+model_optimization:
+  AOA_layers: 6
+  gamma: 2
+  num_hid: 1024
+  dropout: 0.45
+  activation: "swish"
+
+# 数据加载优化 - 针对24GB GPU
+data_loading:
+  cache_features: true
+  preload_data: true      # 24GB显存不适合预加载大量数据
+  use_compression: true    # 启用压缩节省内存
+  shuffle_buffer_size: 5000  # 减少shuffle buffer
+
+# GPU优化参数 - 针对24GB GPU
+gpu_optimization:
+  cudnn_benchmark: true
+  cudnn_deterministic: false
+  memory_fraction: 0.95
+  allow_growth: false       # 启用显存增长，更灵活
+
+# 分布式训练优化
+distributed_optimization:
+  find_unused_parameters: false
+  broadcast_buffers: true
+  bucket_cap_mb: 50       # 减少bucket容量
+  static_graph: true 
